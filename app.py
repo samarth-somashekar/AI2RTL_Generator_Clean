@@ -1,15 +1,15 @@
 import streamlit as st
-import openai
 import os
 from dotenv import load_dotenv
+from openai import OpenAI
 
 # Load your OpenAI API key
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI()  # This reads your OPENAI_API_KEY from .env
 
 def generate_verilog(description):
     try:
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are a Verilog engineer. Generate synthesizable Verilog code for user's functional description."},
@@ -18,10 +18,11 @@ def generate_verilog(description):
             temperature=0.2,
             max_tokens=1000
         )
-        return response['choices'][0]['message']['content']
+        return response.choices[0].message.content
     except Exception as e:
         return f"Error: {str(e)}"
 
+# Streamlit UI
 st.title("🧠 AI2RTL - Verilog Generator")
 
 desc = st.text_area("📝 Describe your logic circuit:", "4-bit synchronous up counter with async reset")
