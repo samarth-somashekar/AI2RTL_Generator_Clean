@@ -20,7 +20,9 @@ def generate_verilog(description):
         )
         return response.choices[0].message.content
     except Exception as e:
-        return f"Error: {str(e)}"
+    if "quota" in str(e).lower():
+        return "⚠️ OpenAI API quota exceeded. Please check your usage or billing settings."
+    return f"❌ Unexpected error: {str(e)}"
 
 # Streamlit UI
 st.title("🧠 AI2RTL - Verilog Generator")
